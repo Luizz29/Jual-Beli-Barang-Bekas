@@ -1,0 +1,51 @@
+<?php
+// Koneksi ke database
+include '../koneksi.php';
+
+$message = ""; // Initialize message variable
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $productId = $_POST['product_id'];
+
+    // Update status produk menjadi "reject" di tabel pending_product
+    $sql = "UPDATE pending_products SET status = 'reject' WHERE id = ?";
+    $stmt = $koneksi->prepare($sql);
+    $stmt->bind_param("i", $productId);
+    
+    if ($stmt->execute()) {
+        $message = "Produk telah ditolak."; // Set message
+    } else {
+        $message = "Error saat menolak produk: " . $stmt->error; // Set error message
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../seller/style.css">
+    <title>Document</title>
+    <link rel="icon" href="image/chic (5).png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Display alert if message is set and redirect
+        window.onload = function() {
+            const message = <?php echo json_encode($message); ?>;
+            if (message) {
+                Swal.fire({
+                    title: 'Info',
+                    text: message,
+                    icon: 'success',
+                    confirmButtonText: 'Ok'
+                }).then(() => {
+                    window.location.href = 'product_pending_approval.php'; // Redirect after alert is dismissed
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>

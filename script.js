@@ -1,0 +1,1 @@
+const checkoutButton = document.querySelector('.checkout-button')
